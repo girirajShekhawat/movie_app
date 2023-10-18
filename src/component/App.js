@@ -20,8 +20,8 @@ class  App extends React.Component{
 
 isfavorite=(movie)=>{
 
-  const {fav}= this.props.store.getState();
-
+  const {movies}= this.props.store.getState();
+ const {fav}=movies;
   const index=fav.indexOf(movie);
   if(index !== -1){
     return true;
@@ -39,7 +39,8 @@ isfavorite=(movie)=>{
  
 
   render(){
-    const {list,showTheFav,fav}=this.props.store.getState();
+    const {movies}=this.props.store.getState();
+    const {list,showTheFav,fav}=movies;
 
     const showMovie= showTheFav ? fav : list 
 
