@@ -4,23 +4,18 @@ import Navbar from "./Navbar";
 import MovieCard from "./movieCard";
 import { addMovies,showFav } from "../actions";
 import { data } from "../data";
+import { connect } from "react-redux";
+
 
 class  App extends React.Component{
 
- 
   componentDidMount(){
-  const {store}=this.props;
- 
-  store.subscribe(()=>{
-    this.forceUpdate();
-  })
-
-  store.dispatch(addMovies(data))
+  this.props.dispatch(addMovies(data))
 }
 
 isfavorite=(movie)=>{
 
-  const {movies}= this.props.store.getState();
+  const {movies}= this.props;
  const {fav}=movies;
   const index=fav.indexOf(movie);
   if(index !== -1){
@@ -32,22 +27,21 @@ isfavorite=(movie)=>{
 
  handleShowFav=(value)=>{
 
-  this.props.store.dispatch(showFav(value));
+  this.props.dispatch(showFav(value));
 
 }
 
- 
-
   render(){
-    const {movies}=this.props.store.getState();
+    const {movies,search}=this.props
     const {list,showTheFav,fav}=movies;
 
     const showMovie= showTheFav ? fav : list 
 
-{console.log("type",this.props.store.getState());}
+
+
     return (
       <div className="App">
-        <Navbar/>
+        <Navbar  dispatch={this.props.dispatch} search={search} />
         <div className="main">
   <div className="tabs">
   <div className={`tab ${showTheFav ? "" : `active-tabs`}`}  onClick={()=>this.handleShowFav(false)}>Movies</div>
@@ -61,7 +55,7 @@ isfavorite=(movie)=>{
         <MovieCard 
         movie={movie} 
          key={`mpvie-${index}`} 
-         dispatch={this.props.store.dispatch}
+         dispatch={this.props.dispatch}
          isfavorite={this.isfavorite(movie)}   />
       
       ))}
@@ -75,4 +69,28 @@ isfavorite=(movie)=>{
   
 }
 
-export default App;
+
+// class AppWrapper extends React.Component{
+//   render(){
+//     return(
+//       <storeContex.Consumer>
+//         {(store)=>{
+//           return (
+//             <App store={store}/>
+//           )
+//         }}
+//       </storeContex.Consumer>
+//     )
+//   }
+// }
+
+function mapStateToProps(state){
+  return{
+    movies:state.movies,
+    search:state.search,
+  }
+}
+
+const connectedComponent=connect(mapStateToProps)(App)
+
+export default connectedComponent;
